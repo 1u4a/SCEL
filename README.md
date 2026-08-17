@@ -1,0 +1,1 @@
+# Simulador_de_Consumo_de_Energia_Eletrica---BG-MT-
