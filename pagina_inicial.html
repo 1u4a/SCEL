@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCEL</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent: #38bdf8;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --highlight: #f43f5e;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 700px;
+            width: 100%;
+        }
+
+        h1 {
+            color: var(--accent);
+            text-align: center;
+            font-size: 1.8rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .grid-eletros {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 12px;
+            max-height: 350px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .eletro-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #0f172a;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .eletro-item label {
+            font-size: 0.9rem;
+            text-transform: capitalize;
+        }
+
+        .eletro-item input {
+            width: 60px;
+            padding: 5px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background-color: var(--card-bg);
+            color: var(--text);
+            text-align: center;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .input-group label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .input-group input {
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background-color: #0f172a;
+            color: var(--text);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--accent);
+            color: #0f172a;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .resultado {
+            display: none;
+        }
+
+        .resumo-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .resumo-box {
+            background: #0f172a;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .resumo-box span {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .resumo-box strong {
+            font-size: 1.1rem;
+            color: var(--accent);
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+        }
+
+        .top-culpado {
+            color: var(--highlight);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>SCEL - Simulador de Consumo Elétrico</h1>
+
+    <div class="card">
+        <h3>Informe a quantidade de cada aparelho</h3>
+        <div class="grid-eletros" id="gridEletros"></div>
+
+        <div class="controls">
+            <div class="input-group">
+                <label for="horas">Horas por dia:</label>
+                <input type="number" id="horas" value="5" min="1" max="24">
+            </div>
+            <div class="input-group">
+                <label for="dias">Dias no mês:</label>
+                <input type="number" id="dias" value="30" min="1" max="31">
+            </div>
+        </div>
+
+        <button onclick="calcular()">Calcular Estimativa</button>
+    </div>
+
+    <div class="card resultado" id="cardResultado">
+        <h3>2. Resultado da Análise</h3>
+        <div class="resumo-cards">
+            <div class="resumo-box">
+                <span>Potência Total</span>
+                <strong id="resPotencia">0 W</strong>
+            </div>
+            <div class="resumo-box">
+                <span>Consumo Total</span>
+                <strong id="resConsumo">0 kWh</strong>
+            </div>
+            <div class="resumo-box">
+                <span>Custo Estimado</span>
+                <strong id="resValor">R$ 0,00</strong>
+            </div>
+        </div>
+
+        <h4>O que faz a conta ficar tão ruim:</h4>
+        <ul id="listaCulpados"></ul>
+    </div>
+</div>
+
+<script>
+    const BancoDeDados = {
+        "air_fryer": { "potencia_w": 1500, "consumo_mensal_kwh": 22.5 },
+        "ar_condicionado": { "potencia_w": 1400, "consumo_mensal_kwh": 63 },
+        "aspirador": { "potencia_w": 1000, "consumo_mensal_kwh": 4 },
+        "cafeteira": { "potencia_w": 1000, "consumo_mensal_kwh": 10 },
+        "carregador_celular": { "potencia_w": 15, "consumo_mensal_kwh": 0.45 },
+        "carregador_notebook": { "potencia_w": 45, "consumo_mensal_kwh": 1.35 },
+        "chuveiro": { "potencia_w": 3500, "consumo_mensal_kwh": 70 },
+        "climatizador": { "potencia_w": 150, "consumo_mensal_kwh": 36 },
+        "computador_desktop": { "potencia_w": 200, "consumo_mensal_kwh": 18 },
+        "computador_notebook": { "potencia_w": 60, "consumo_mensal_kwh": 5.4 },
+        "ferro_pasar": { "potencia_w": 1000, "consumo_mensal_kwh": 15 },
+        "fogao_eletrico": { "potencia_w": 3500, "consumo_mensal_kwh": 105 },
+        "fogao_gas": { "potencia_w": 60, "consumo_mensal_kwh": 0.15 },
+        "geladeira": { "potencia_w": 200, "consumo_mensal_kwh": 60 },
+        "impressora": { "potencia_w": 180, "consumo_mensal_kwh": 16.2 },
+        "lampada_fluorescente": { "potencia_w": 15, "consumo_mensal_kwh": 2.2 },
+        "lampada_incandescente": { "potencia_w": 100, "consumo_mensal_kwh": 9 },
+        "lampada_led": { "potencia_w": 9, "consumo_mensal_kwh": 2.7 },
+        "liquidificador": { "potencia_w": 150, "consumo_mensal_kwh": 1.5 },
+        "maquina_lavar": { "potencia_w": 1500, "consumo_mensal_kwh": 22.5 },
+        "maquina_lavar_louca": { "potencia_w": 1500, "consumo_mensal_kwh": 45 },
+        "microondas": { "potencia_w": 1300, "consumo_mensal_kwh": 19.5 },
+        "roteador": { "potencia_w": 10, "consumo_mensal_kwh": 7.2 },
+        "sanduicheira": { "potencia_w": 1000, "consumo_mensal_kwh": 7.5 },
+        "secadora": { "potencia_w": 3500, "consumo_mensal_kwh": 52.5 },
+        "tv": { "potencia_w": 100, "consumo_mensal_kwh": 15 },
+        "ventilador": { "potencia_w": 60, "consumo_mensal_kwh": 9 },
+        "video_game": { "potencia_w": 150, "consumo_mensal_kwh": 13.5 }
+    };
+
+    const TARIFAMT = 0.899;
+
+    const grid = document.getElementById('gridEletros');
+    Object.keys(BancoDeDados).forEach(chave => {
+        const nomeFormatado = chave.replace(/_/g, ' ');
+        grid.innerHTML += `
+            <div class="eletro-item">
+                <label for="${chave}">${nomeFormatado}</label>
+                <input type="number" id="${chave}" min="0" value="0">
+            </div>
+        `;
+    });
+
+    function calcular() {
+        const horas = parseFloat(document.getElementById('horas').value) || 0;
+        const dias = parseFloat(document.getElementById('dias').value) || 0;
+        
+        let potenciaTotal = 0;
+        let consumoIndividual = {};
+
+        Object.keys(BancoDeDados).forEach(chave => {
+            const qtd = parseInt(document.getElementById(chave).value) || 0;
+            if (qtd > 0) {
+                const pot = BancoDeDados[chave].potencia_w * qtd;
+                potenciaTotal += pot;
+                consumoIndividual[chave] = (pot * horas * dias) / 1000;
+            }
+        });
+
+        const consumoKwh = (potenciaTotal * horas * dias) / 1000;
+        const valorReais = consumoKwh * TARIFAMT;
+
+        document.getElementById('resPotencia').innerText = `${potenciaTotal} W`;
+        document.getElementById('resConsumo').innerText = `${consumoKwh.toFixed(2)} kWh`;
+        document.getElementById('resValor').innerText = `R$ ${valorReais.toFixed(2)}`;
+
+        const culpados = Object.entries(consumoIndividual)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 3);
+
+        const listaCulpados = document.getElementById('listaCulpados');
+        listaCulpados.innerHTML = '';
+
+        if (culpados.length === 0) {
+            listaCulpados.innerHTML = '<li>Nenhum aparelho selecionado</li>';
+        } else {
+            culpados.forEach(([nome, consumo], index) => {
+                const percentual = consumoKwh > 0 ? ((consumo / consumoKwh) * 100).toFixed(1) : 0;
+                const nomeFormatado = nome.replace(/_/g, ' ');
+                listaCulpados.innerHTML += `
+                    <li class="${index === 0 ? 'top-culpado' : ''}">
+                        <span>${index + 1}º ${nomeFormatado.toUpperCase()}</span>
+                        <span>${consumo.toFixed(2)} kWh (${percentual}%)</span>
+                    </li>
+                `;
+            });
+        }
+
+        document.getElementById('cardResultado').style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
