@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SCEL</title>
+    <title>SCEL - Simulador de Consumo Elétrico (MT)</title>
     <style>
         :root {
             --bg-color: #0f172a;
@@ -13,6 +13,7 @@
             --text-muted: #94a3b8;
             --border: #334155;
             --highlight: #f43f5e;
+            --green: #22c55e;
         }
 
         body {
@@ -26,7 +27,7 @@
         }
 
         .container {
-            max-width: 700px;
+            max-width: 850px;
             width: 100%;
         }
 
@@ -34,6 +35,14 @@
             color: var(--accent);
             text-align: center;
             font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .sub-header {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 25px;
         }
 
         .card {
@@ -44,64 +53,96 @@
             border: 1px solid var(--border);
         }
 
-        .grid-eletros {
+        .tarifa-info {
+            background: #0f172a;
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            margin: 0 auto 20px auto;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: fit-content;
+        }
+
+        .tarifa-wrapper {
+            text-align: center;
+        }
+
+        .bandeira-select {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .bandeira-select label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        select {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background-color: #1e293b;
+            color: var(--text);
+            font-size: 0.85rem;
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        select:focus {
+            border-color: var(--accent);
+        }
+
+        .grid-header {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 12px;
-            max-height: 350px;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 8px;
+            padding: 0 10px 8px 10px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .grid-eletros {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 400px;
             overflow-y: auto;
             padding-right: 5px;
         }
 
         .eletro-item {
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 8px;
             align-items: center;
             background: #0f172a;
-            padding: 10px;
+            padding: 8px 10px;
             border-radius: 8px;
             border: 1px solid var(--border);
         }
 
         .eletro-item label {
-            font-size: 0.9rem;
-            text-transform: capitalize;
+            font-size: 0.85rem;
+            font-weight: 500;
         }
 
         .eletro-item input {
-            width: 60px;
-            padding: 5px;
+            width: 100%;
+            padding: 6px;
             border-radius: 6px;
             border: 1px solid var(--border);
             background-color: var(--card-bg);
             color: var(--text);
             text-align: center;
-        }
-
-        .controls {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .input-group label {
             font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        .input-group input {
-            padding: 8px;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-            background-color: #0f172a;
-            color: var(--text);
+            box-sizing: border-box;
         }
 
         button {
@@ -130,13 +171,13 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 10px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             text-align: center;
         }
 
         .resumo-box {
             background: #0f172a;
-            padding: 10px;
+            padding: 12px;
             border-radius: 8px;
         }
 
@@ -147,7 +188,7 @@
         }
 
         .resumo-box strong {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             color: var(--accent);
         }
 
@@ -158,7 +199,7 @@
         }
 
         li {
-            padding: 8px 0;
+            padding: 10px 0;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
@@ -169,120 +210,221 @@
             color: var(--highlight);
             font-weight: bold;
         }
+
+        .projecao-container {
+            margin-top: 20px;
+        }
+
+        .tabela-projecao {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin-top: 10px;
+        }
+
+        .tabela-projecao th, .tabela-projecao td {
+            padding: 8px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tabela-projecao th {
+            background-color: #0f172a;
+            color: var(--accent);
+        }
+
+        .tabela-projecao tr:nth-child(even) {
+            background-color: #0f172a40;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>SCEL - Simulador de Consumo Elétrico</h1>
+    <h1>SCEL - Sistema de Consumo Elétrico</h1>
+    <div class="sub-header">Base de Cálculo: Estado de Mato Grosso (Energisa MT)</div>
 
     <div class="card">
-        <h3>Informe a quantidade de cada aparelho</h3>
-        <div class="grid-eletros" id="gridEletros"></div>
-
-        <div class="controls">
-            <div class="input-group">
-                <label for="horas">Horas por dia:</label>
-                <input type="number" id="horas" value="5" min="1" max="24">
-            </div>
-            <div class="input-group">
-                <label for="dias">Dias no mês:</label>
-                <input type="number" id="dias" value="30" min="1" max="31">
+        <div class="tarifa-wrapper">
+            <div class="tarifa-info">
+                <div class="bandeira-select">
+                    <label for="bandeira">Bandeira Tarifária:</label>
+                    <select id="bandeira">
+                        <option value="verde">Verde (Sem Adicional)</option>
+                        <option value="amarela">Amarela (+ R$ 0,01885 / kWh)</option>
+                        <option value="vermelha_1">Vermelha - Patamar 1 (+ R$ 0,04463 / kWh)</option>
+                        <option value="vermelha_2">Vermelha - Patamar 2 (+ R$ 0,07877 / kWh)</option>
+                        <option value="escassez_hidrica">Escassez Hídrica (+ R$ 0,14200 / kWh)</option>
+                    </select>
+                </div>
             </div>
         </div>
 
-        <button onclick="calcular()">Calcular Estimativa</button>
+        <h3>Informe o uso de cada aparelho:</h3>
+        <div class="grid-header">
+            <span>Aparelho</span>
+            <span>Qtd.</span>
+            <span>Horas/dia</span>
+            <span>Dias/mês</span>
+        </div>
+        <div class="grid-eletros" id="gridEletros"></div>
+
+        <button onclick="calcular()">Calcular Estimativa e Realizar Projeção</button>
     </div>
 
     <div class="card resultado" id="cardResultado">
-        <h3>2. Resultado da Análise</h3>
+        <h3>Resultado da Análise Mensal</h3>
         <div class="resumo-cards">
             <div class="resumo-box">
-                <span>Potência Total</span>
+                <span>Potência Total Instalada</span>
                 <strong id="resPotencia">0 W</strong>
             </div>
             <div class="resumo-box">
-                <span>Consumo Total</span>
+                <span>Consumo Mensal</span>
                 <strong id="resConsumo">0 kWh</strong>
             </div>
             <div class="resumo-box">
-                <span>Custo Estimado</span>
+                <span>Custo Estimado (Mês)</span>
                 <strong id="resValor">R$ 0,00</strong>
             </div>
         </div>
 
         <h4>O que faz a conta ficar tão ruim:</h4>
         <ul id="listaCulpados"></ul>
+
+        <div class="projecao-container">
+            <h4>Projeção Temporal de Consumo e Gastos (Ao Longo do Ano)</h4>
+            <table class="tabela-projecao">
+                <thead>
+                    <tr>
+                        <th>Mês</th>
+                        <th>Gasto Mensal</th>
+                        <th>Consumo Acumulado</th>
+                        <th>Gasto Acumulado</th>
+                    </tr>
+                </thead>
+                <tbody id="corpoProjecao"></tbody>
+            </table>
+        </div>
     </div>
 </div>
 
 <script>
-    const BancoDeDados = {
-        "air_fryer": { "potencia_w": 1500, "consumo_mensal_kwh": 22.5 },
-        "ar_condicionado": { "potencia_w": 1400, "consumo_mensal_kwh": 63 },
-        "aspirador": { "potencia_w": 1000, "consumo_mensal_kwh": 4 },
-        "cafeteira": { "potencia_w": 1000, "consumo_mensal_kwh": 10 },
-        "carregador_celular": { "potencia_w": 15, "consumo_mensal_kwh": 0.45 },
-        "carregador_notebook": { "potencia_w": 45, "consumo_mensal_kwh": 1.35 },
-        "chuveiro": { "potencia_w": 3500, "consumo_mensal_kwh": 70 },
-        "climatizador": { "potencia_w": 150, "consumo_mensal_kwh": 36 },
-        "computador_desktop": { "potencia_w": 200, "consumo_mensal_kwh": 18 },
-        "computador_notebook": { "potencia_w": 60, "consumo_mensal_kwh": 5.4 },
-        "ferro_pasar": { "potencia_w": 1000, "consumo_mensal_kwh": 15 },
-        "fogao_eletrico": { "potencia_w": 3500, "consumo_mensal_kwh": 105 },
-        "fogao_gas": { "potencia_w": 60, "consumo_mensal_kwh": 0.15 },
-        "geladeira": { "potencia_w": 200, "consumo_mensal_kwh": 60 },
-        "impressora": { "potencia_w": 180, "consumo_mensal_kwh": 16.2 },
-        "lampada_fluorescente": { "potencia_w": 15, "consumo_mensal_kwh": 2.2 },
-        "lampada_incandescente": { "potencia_w": 100, "consumo_mensal_kwh": 9 },
-        "lampada_led": { "potencia_w": 9, "consumo_mensal_kwh": 2.7 },
-        "liquidificador": { "potencia_w": 150, "consumo_mensal_kwh": 1.5 },
-        "maquina_lavar": { "potencia_w": 1500, "consumo_mensal_kwh": 22.5 },
-        "maquina_lavar_louca": { "potencia_w": 1500, "consumo_mensal_kwh": 45 },
-        "microondas": { "potencia_w": 1300, "consumo_mensal_kwh": 19.5 },
-        "roteador": { "potencia_w": 10, "consumo_mensal_kwh": 7.2 },
-        "sanduicheira": { "potencia_w": 1000, "consumo_mensal_kwh": 7.5 },
-        "secadora": { "potencia_w": 3500, "consumo_mensal_kwh": 52.5 },
-        "tv": { "potencia_w": 100, "consumo_mensal_kwh": 15 },
-        "ventilador": { "potencia_w": 60, "consumo_mensal_kwh": 9 },
-        "video_game": { "potencia_w": 150, "consumo_mensal_kwh": 13.5 }
+    const NomesFormatados = {
+        "air_fryer": "Air Fryer",
+        "ar_condicionado": "Ar-Condicionado",
+        "aspirador": "Aspirador de Pó",
+        "cafeteira": "Cafeteira Elétrica",
+        "carregador_celular": "Carregador de Celular",
+        "carregador_notebook": "Carregador de Notebook",
+        "chuveiro": "Chuveiro Elétrico",
+        "climatizador": "Climatizador de Ar",
+        "computador_desktop": "Computador Desktop",
+        "computador_notebook": "Notebook",
+        "ferro_pasar": "Ferro de Passar",
+        "fogao_eletrico": "Fogão Elétrico",
+        "fogao_gas": "Fogão a Gás (Ignition)",
+        "geladeira": "Geladeira",
+        "impressora": "Impressora",
+        "lampada_fluorescente": "Lâmpada Fluorescente",
+        "lampada_incandescente": "Lâmpada Incandescente",
+        "lampada_led": "Lâmpada LED",
+        "liquidificador": "Liquidificador",
+        "maquina_lavar": "Máquina de Lavar Roupa",
+        "maquina_lavar_louca": "Máquina de Lavar Louça",
+        "microondas": "Micro-ondas",
+        "roteador": "Roteador Wi-Fi",
+        "sanduicheira": "Sanduicheira",
+        "secadora": "Secadora de Roupas",
+        "tv": "Televisão",
+        "ventilador": "Ventilador",
+        "video_game": "Videogame"
     };
 
-    const TARIFAMT = 0.899;
+    const BancoDeDados = {
+        "air_fryer": { "potencia_w": 1500 },
+        "ar_condicionado": { "potencia_w": 1400 },
+        "aspirador": { "potencia_w": 1000 },
+        "cafeteira": { "potencia_w": 1000 },
+        "carregador_celular": { "potencia_w": 15 },
+        "carregador_notebook": { "potencia_w": 45 },
+        "chuveiro": { "potencia_w": 3500 },
+        "climatizador": { "potencia_w": 150 },
+        "computador_desktop": { "potencia_w": 200 },
+        "computador_notebook": { "potencia_w": 60 },
+        "ferro_pasar": { "potencia_w": 1000 },
+        "fogao_eletrico": { "potencia_w": 3500 },
+        "fogao_gas": { "potencia_w": 60 },
+        "geladeira": { "potencia_w": 200 },
+        "impressora": { "potencia_w": 180 },
+        "lampada_fluorescente": { "potencia_w": 15 },
+        "lampada_incandescente": { "potencia_w": 100 },
+        "lampada_led": { "potencia_w": 9 },
+        "liquidificador": { "potencia_w": 150 },
+        "maquina_lavar": { "potencia_w": 1500 },
+        "maquina_lavar_louca": { "potencia_w": 1500 },
+        "microondas": { "potencia_w": 1300 },
+        "roteador": { "potencia_w": 10 },
+        "sanduicheira": { "potencia_w": 1000 },
+        "secadora": { "potencia_w": 3500 },
+        "tv": { "potencia_w": 100 },
+        "ventilador": { "potencia_w": 60 },
+        "video_game": { "potencia_w": 150 }
+    };
+
+    const TARIFA_BASE_MT = 0.899;
+    const ADICIONAL_BANDEIRA = {
+        'verde': 0.0,
+        'amarela': 0.01885,
+        'vermelha_1': 0.04463,
+        'vermelha_2': 0.07877,
+        'escassez_hidrica': 0.14200
+    };
+
+    const Meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
 
     const grid = document.getElementById('gridEletros');
     Object.keys(BancoDeDados).forEach(chave => {
-        const nomeFormatado = chave.replace(/_/g, ' ');
+        const nomeCorreto = NomesFormatados[chave] || chave;
+
         grid.innerHTML += `
             <div class="eletro-item">
-                <label for="${chave}">${nomeFormatado}</label>
-                <input type="number" id="${chave}" min="0" value="0">
+                <label for="qtd_${chave}">${nomeCorreto}</label>
+                <input type="number" id="qtd_${chave}" min="0" placeholder="0">
+                <input type="number" id="horas_${chave}" step="0.1" min="0" max="24" placeholder="0">
+                <input type="number" id="dias_${chave}" min="0" max="31" placeholder="0">
             </div>
         `;
     });
 
     function calcular() {
-        const horas = parseFloat(document.getElementById('horas').value) || 0;
-        const dias = parseFloat(document.getElementById('dias').value) || 0;
-        
+        const bandeira = document.getElementById('bandeira').value;
+        const tarifaFinal = TARIFA_BASE_MT + ADICIONAL_BANDEIRA[bandeira];
+
         let potenciaTotal = 0;
+        let consumoTotalKwh = 0;
         let consumoIndividual = {};
 
         Object.keys(BancoDeDados).forEach(chave => {
-            const qtd = parseInt(document.getElementById(chave).value) || 0;
-            if (qtd > 0) {
+            const qtd = parseInt(document.getElementById(`qtd_${chave}`).value) || 0;
+            const horas = parseFloat(document.getElementById(`horas_${chave}`).value) || 0;
+            const dias = parseInt(document.getElementById(`dias_${chave}`).value) || 0;
+
+            if (qtd > 0 && horas > 0 && dias > 0) {
                 const pot = BancoDeDados[chave].potencia_w * qtd;
                 potenciaTotal += pot;
-                consumoIndividual[chave] = (pot * horas * dias) / 1000;
+
+                const consumoKwhItem = (pot * horas * dias) / 1000;
+                consumoTotalKwh += consumoKwhItem;
+                consumoIndividual[chave] = consumoKwhItem;
             }
         });
 
-        const consumoKwh = (potenciaTotal * horas * dias) / 1000;
-        const valorReais = consumoKwh * TARIFAMT;
+        const valorTotalReais = consumoTotalKwh * tarifaFinal;
 
-        document.getElementById('resPotencia').innerText = `${potenciaTotal} W`;
-        document.getElementById('resConsumo').innerText = `${consumoKwh.toFixed(2)} kWh`;
-        document.getElementById('resValor').innerText = `R$ ${valorReais.toFixed(2)}`;
+        document.getElementById('resPotencia').innerText = `${potenciaTotal.toLocaleString('pt-BR')} W`;
+        document.getElementById('resConsumo').innerText = `${consumoTotalKwh.toFixed(2).replace('.', ',')} kWh`;
+        document.getElementById('resValor').innerText = `R$ ${valorTotalReais.toFixed(2).replace('.', ',')}`;
 
         const culpados = Object.entries(consumoIndividual)
             .sort((a, b) => b[1] - a[1])
@@ -292,19 +434,39 @@
         listaCulpados.innerHTML = '';
 
         if (culpados.length === 0) {
-            listaCulpados.innerHTML = '<li>Nenhum aparelho selecionado</li>';
+            listaCulpados.innerHTML = '<li>Nenhum aparelho com valores válidos informado.</li>';
         } else {
             culpados.forEach(([nome, consumo], index) => {
-                const percentual = consumoKwh > 0 ? ((consumo / consumoKwh) * 100).toFixed(1) : 0;
-                const nomeFormatado = nome.replace(/_/g, ' ');
+                const percentual = consumoTotalKwh > 0 ? ((consumo / consumoTotalKwh) * 100).toFixed(1) : 0;
+                const nomeExibicao = NomesFormatados[nome] || nome;
                 listaCulpados.innerHTML += `
                     <li class="${index === 0 ? 'top-culpado' : ''}">
-                        <span>${index + 1}º ${nomeFormatado.toUpperCase()}</span>
-                        <span>${consumo.toFixed(2)} kWh (${percentual}%)</span>
+                        <span>${index + 1}º ${nomeExibicao.toUpperCase()}</span>
+                        <span>${consumo.toFixed(2).replace('.', ',')} kWh (${percentual}%)</span>
                     </li>
                 `;
             });
         }
+
+        const corpoProjecao = document.getElementById('corpoProjecao');
+        corpoProjecao.innerHTML = '';
+
+        let acKwh = 0;
+        let acReais = 0;
+
+        Meses.forEach((mes) => {
+            acKwh += consumoTotalKwh;
+            acReais += valorTotalReais;
+
+            corpoProjecao.innerHTML += `
+                <tr>
+                    <td>${mes}</td>
+                    <td>R$ ${valorTotalReais.toFixed(2).replace('.', ',')}</td>
+                    <td>${acKwh.toFixed(2).replace('.', ',')} kWh</td>
+                    <td>R$ ${acReais.toFixed(2).replace('.', ',')}</td>
+                </tr>
+            `;
+        });
 
         document.getElementById('cardResultado').style.display = 'block';
     }
