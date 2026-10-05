@@ -14,6 +14,7 @@
             --border: #334155;
             --highlight: #f43f5e;
             --green: #22c55e;
+            --yellow: #eab308;
         }
 
         body {
@@ -27,7 +28,7 @@
         }
 
         .container {
-            max-width: 850px;
+            max-width: 950px;
             width: 100%;
         }
 
@@ -53,20 +54,20 @@
             border: 1px solid var(--border);
         }
 
+        .tarifa-wrapper {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
         .tarifa-info {
             background: #0f172a;
             padding: 12px 20px;
             border-radius: 10px;
             border: 1px solid var(--border);
-            margin: 0 auto 20px auto;
             display: inline-flex;
             justify-content: center;
             align-items: center;
             width: fit-content;
-        }
-
-        .tarifa-wrapper {
-            text-align: center;
         }
 
         .bandeira-select {
@@ -81,7 +82,7 @@
             white-space: nowrap;
         }
 
-        select {
+        select, input[type="number"], input[type="text"] {
             padding: 8px 12px;
             border-radius: 8px;
             border: 1px solid var(--border);
@@ -89,17 +90,68 @@
             color: var(--text);
             font-size: 0.85rem;
             outline: none;
-            cursor: pointer;
             transition: border-color 0.2s;
         }
 
-        select:focus {
+        select:focus, input:focus {
             border-color: var(--accent);
+        }
+
+        /* Correção para evitar que o card do Histórico de Consumo estique */
+        .config-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: start;
+        }
+
+        .config-box {
+            background: #0f172a;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .config-box h4 {
+            margin: 0 0 10px 0;
+            color: var(--accent);
+            font-size: 0.95rem;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .field-group label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .eletro-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .add-btn {
+            background-color: #0284c7;
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: bold;
         }
 
         .grid-header {
             display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr 40px;
             gap: 8px;
             padding: 0 10px 8px 10px;
             font-size: 0.75rem;
@@ -112,14 +164,14 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
-            max-height: 400px;
+            max-height: 420px;
             overflow-y: auto;
             padding-right: 5px;
         }
 
         .eletro-item {
             display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr 40px;
             gap: 8px;
             align-items: center;
             background: #0f172a;
@@ -128,24 +180,27 @@
             border: 1px solid var(--border);
         }
 
-        .eletro-item label {
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-
-        .eletro-item input {
+        .eletro-item select, .eletro-item input {
             width: 100%;
-            padding: 6px;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-            background-color: var(--card-bg);
-            color: var(--text);
-            text-align: center;
-            font-size: 0.85rem;
             box-sizing: border-box;
+            text-align: center;
         }
 
-        button {
+        .eletro-item input.in-nome-custom {
+            text-align: left;
+        }
+
+        .btn-del {
+            background-color: var(--highlight);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .calc-btn {
             width: 100%;
             padding: 12px;
             background-color: var(--accent);
@@ -159,7 +214,7 @@
             transition: opacity 0.2s;
         }
 
-        button:hover {
+        .calc-btn:hover {
             opacity: 0.9;
         }
 
@@ -169,7 +224,7 @@
 
         .resumo-cards {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 10px;
             margin-bottom: 20px;
             text-align: center;
@@ -179,17 +234,38 @@
             background: #0f172a;
             padding: 12px;
             border-radius: 8px;
+            border: 1px solid var(--border);
         }
 
         .resumo-box span {
             display: block;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
         }
 
         .resumo-box strong {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: var(--accent);
+        }
+
+        .solar-alert {
+            background: #064e3b;
+            border: 1px solid var(--green);
+            color: #ecfdf5;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .comparacao-alert {
+            background: #1e1b4b;
+            border: 1px solid #6366f1;
+            color: #e0e7ff;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
         }
 
         ul {
@@ -260,49 +336,81 @@
             </div>
         </div>
 
-        <h3>Informe o uso de cada aparelho:</h3>
+        <div class="config-grid">
+            <div class="config-box">
+                <h4>Energia Solar</h4>
+                <div class="field-group">
+                    <label for="possuiSolar">Possui sistema de energia solar?</label>
+                    <select id="possuiSolar" onchange="toggleSolarField()">
+                        <option value="nao">Não possui</option>
+                        <option value="sim">Sim, possui</option>
+                    </select>
+                </div>
+                <div class="field-group" id="groupGeracao" style="display: none;">
+                    <label for="geracaoSolar">Geração Estimada (kWh/mês):</label>
+                    <input type="number" id="geracaoSolar" placeholder="ex: 350" min="0">
+                </div>
+            </div>
+
+            <div class="config-box">
+                <h4>Histórico de Consumo</h4>
+                <div class="field-group">
+                    <label for="consumoAnterior">Consumo do Mês Anterior (kWh):</label>
+                    <input type="number" id="consumoAnterior" placeholder="ex: 280" min="0">
+                </div>
+            </div>
+        </div>
+
+        <div class="eletro-header">
+            <h3>Informe o uso de cada aparelho:</h3>
+            <button class="add-btn" onclick="adicionarAparelho()">+ Adicionar Aparelho</button>
+        </div>
+
         <div class="grid-header">
             <span>Aparelho</span>
+            <span>Potência (W)</span>
             <span>Qtd.</span>
             <span>Horas/dia</span>
             <span>Dias/mês</span>
+            <span>Ação</span>
         </div>
         <div class="grid-eletros" id="gridEletros"></div>
 
-        <button onclick="calcular()">Calcular Estimativa e Realizar Projeção</button>
+        <button class="calc-btn" onclick="calcular()">Calcular Estimativa e Realizar Projeção</button>
     </div>
 
     <div class="card resultado" id="cardResultado">
         <h3>Resultado da Análise Mensal</h3>
+        
         <div class="resumo-cards">
             <div class="resumo-box">
-                <span>Potência Total Instalada</span>
+                <span>Potência Instalada</span>
                 <strong id="resPotencia">0 W</strong>
             </div>
             <div class="resumo-box">
-                <span>Consumo Mensal</span>
+                <span>Consumo Bruto</span>
                 <strong id="resConsumo">0 kWh</strong>
             </div>
+            <div class="resumo-box" id="boxConsumoFaturado" style="display: none;">
+                <span>Consumo Faturado</span>
+                <strong id="resConsumoFaturado">0 kWh</strong>
+            </div>
             <div class="resumo-box">
-                <span>Custo Estimado (Mês)</span>
+                <span>Custo Estimado</span>
                 <strong id="resValor">R$ 0,00</strong>
             </div>
         </div>
 
-        <h4>O que faz a conta ficar tão ruim:</h4>
+        <div id="boxSolarInfo" class="solar-alert" style="display: none;"></div>
+        <div id="boxComparacaoInfo" class="comparacao-alert" style="display: none;"></div>
+
+        <h4>Aparelhos que mais impactam a conta:</h4>
         <ul id="listaCulpados"></ul>
 
         <div class="projecao-container">
             <h4>Projeção Temporal de Consumo e Gastos (Ao Longo do Ano)</h4>
             <table class="tabela-projecao">
-                <thead>
-                    <tr>
-                        <th>Mês</th>
-                        <th>Gasto Mensal</th>
-                        <th>Consumo Acumulado</th>
-                        <th>Gasto Acumulado</th>
-                    </tr>
-                </thead>
+                <thead id="cabecalhoProjecao"></thead>
                 <tbody id="corpoProjecao"></tbody>
             </table>
         </div>
@@ -311,6 +419,7 @@
 
 <script>
     const NomesFormatados = {
+        "novo_customizado": "➕ Outro Aparelho (Novo)",
         "air_fryer": "Air Fryer",
         "ar_condicionado": "Ar-Condicionado",
         "aspirador": "Aspirador de Pó",
@@ -382,91 +491,247 @@
     };
 
     const Meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+    let contadorItens = 0;
 
-    const grid = document.getElementById('gridEletros');
-    Object.keys(BancoDeDados).forEach(chave => {
-        const nomeCorreto = NomesFormatados[chave] || chave;
+    function toggleSolarField() {
+        const possuiSolar = document.getElementById('possuiSolar').value === 'sim';
+        document.getElementById('groupGeracao').style.display = possuiSolar ? 'flex' : 'none';
+    }
 
-        grid.innerHTML += `
-            <div class="eletro-item">
-                <label for="qtd_${chave}">${nomeCorreto}</label>
-                <input type="number" id="qtd_${chave}" min="0" placeholder="0">
-                <input type="number" id="horas_${chave}" step="0.1" min="0" max="24" placeholder="0">
-                <input type="number" id="dias_${chave}" min="0" max="31" placeholder="0">
+    function atualizarPotenciaEletro(idItem) {
+        const itemRow = document.getElementById(idItem);
+        const tipoSelect = itemRow.querySelector('.sel-tipo').value;
+        const inputPot = itemRow.querySelector('.in-potencia');
+        const containerNome = itemRow.querySelector('.container-nome');
+
+        if (tipoSelect === 'novo_customizado') {
+            containerNome.innerHTML = `<input type="text" class="in-nome-custom" placeholder="Nome do Aparelho">`;
+            inputPot.removeAttribute('readonly');
+            inputPot.value = '';
+            inputPot.placeholder = 'ex: 800';
+        } else {
+            containerNome.innerHTML = `
+                <select class="sel-tipo" onchange="atualizarPotenciaEletro('${idItem}')">
+                    ${gerarOptionsSelect(tipoSelect)}
+                </select>
+            `;
+            const potPadrao = BancoDeDados[tipoSelect] ? BancoDeDados[tipoSelect].potencia_w : 0;
+            inputPot.value = potPadrao;
+            inputPot.setAttribute('readonly', 'true');
+        }
+    }
+
+    function gerarOptionsSelect(tipoSelecionado) {
+        let html = '';
+        Object.keys(NomesFormatados).forEach(chave => {
+            const selected = chave === tipoSelecionado ? 'selected' : '';
+            html += `<option value="${chave}" ${selected}>${NomesFormatados[chave]}</option>`;
+        });
+        return html;
+    }
+
+    function adicionarAparelho(tipoInicial = "ar_condicionado") {
+        contadorItens++;
+        const idItem = `item_${contadorItens}`;
+        const grid = document.getElementById('gridEletros');
+
+        const potPadrao = BancoDeDados[tipoInicial] ? BancoDeDados[tipoInicial].potencia_w : '';
+
+        const itemRow = document.createElement('div');
+        itemRow.className = 'eletro-item';
+        itemRow.id = idItem;
+        itemRow.innerHTML = `
+            <div class="container-nome">
+                <select class="sel-tipo" onchange="atualizarPotenciaEletro('${idItem}')">
+                    ${gerarOptionsSelect(tipoInicial)}
+                </select>
             </div>
+            <input type="number" class="in-potencia" value="${potPadrao}" readonly placeholder="Watts">
+            <input type="number" class="in-qtd" min="1" placeholder="Qtd" value="1">
+            <input type="number" class="in-horas" step="0.1" min="0" max="24" placeholder="Horas">
+            <input type="number" class="in-dias" min="0" max="31" placeholder="Dias">
+            <button class="btn-del" onclick="removerAparelho('${idItem}')">X</button>
         `;
-    });
+        grid.appendChild(itemRow);
+    }
+
+    function removerAparelho(id) {
+        const el = document.getElementById(id);
+        if (el) el.remove();
+    }
+
+    window.onload = function() {
+        ["ar_condicionado", "geladeira", "tv", "chuveiro"].forEach(item => adicionarAparelho(item));
+    };
 
     function calcular() {
         const bandeira = document.getElementById('bandeira').value;
         const tarifaFinal = TARIFA_BASE_MT + ADICIONAL_BANDEIRA[bandeira];
+        const possuiSolar = document.getElementById('possuiSolar').value === 'sim';
+        const geracaoSolar = parseFloat(document.getElementById('geracaoSolar').value) || 0;
+        const consumoAnterior = parseFloat(document.getElementById('consumoAnterior').value) || 0;
 
         let potenciaTotal = 0;
         let consumoTotalKwh = 0;
-        let consumoIndividual = {};
+        let listaItensCalculados = [];
 
-        Object.keys(BancoDeDados).forEach(chave => {
-            const qtd = parseInt(document.getElementById(`qtd_${chave}`).value) || 0;
-            const horas = parseFloat(document.getElementById(`horas_${chave}`).value) || 0;
-            const dias = parseInt(document.getElementById(`dias_${chave}`).value) || 0;
+        const linhas = document.querySelectorAll('.eletro-item');
+        linhas.forEach(linha => {
+            const selectElem = linha.querySelector('.sel-tipo');
+            const inputCustom = linha.querySelector('.in-nome-custom');
+            let nomeAparelho = "";
 
-            if (qtd > 0 && horas > 0 && dias > 0) {
-                const pot = BancoDeDados[chave].potencia_w * qtd;
-                potenciaTotal += pot;
+            if (inputCustom) {
+                nomeAparelho = inputCustom.value.trim() || "Novo Aparelho";
+            } else if (selectElem) {
+                nomeAparelho = NomesFormatados[selectElem.value] || selectElem.value;
+            }
 
-                const consumoKwhItem = (pot * horas * dias) / 1000;
-                consumoTotalKwh += consumoKwhItem;
-                consumoIndividual[chave] = consumoKwhItem;
+            const potUnit = parseFloat(linha.querySelector('.in-potencia').value) || 0;
+            const qtd = parseInt(linha.querySelector('.in-qtd').value) || 0;
+            const horas = parseFloat(linha.querySelector('.in-horas').value) || 0;
+            const dias = parseInt(linha.querySelector('.in-dias').value) || 0;
+
+            if (potUnit > 0 && qtd > 0 && horas > 0 && dias > 0) {
+                const potItemTotal = potUnit * qtd;
+                const consumoItem = (potItemTotal * horas * dias) / 1000;
+
+                potenciaTotal += potItemTotal;
+                consumoTotalKwh += consumoItem;
+
+                listaItensCalculados.push({
+                    nome: nomeAparelho,
+                    consumo: consumoItem
+                });
             }
         });
 
-        const valorTotalReais = consumoTotalKwh * tarifaFinal;
+        let consumoFaturadoKwh = consumoTotalKwh;
+        let economiaSolarReais = 0;
+        let economiaSolarKwh = 0;
+
+        if (possuiSolar) {
+            consumoFaturadoKwh = Math.max(30, consumoTotalKwh - geracaoSolar);
+            economiaSolarKwh = Math.max(0, consumoTotalKwh - consumoFaturadoKwh);
+            economiaSolarReais = economiaSolarKwh * tarifaFinal;
+        }
+
+        const valorTotalReais = consumoFaturadoKwh * tarifaFinal;
+        const valorSemSolarReais = consumoTotalKwh * tarifaFinal;
+
+        const boxConsumoFaturado = document.getElementById('boxConsumoFaturado');
+        if (possuiSolar) {
+            boxConsumoFaturado.style.display = 'block';
+            document.getElementById('resConsumoFaturado').innerText = `${consumoFaturadoKwh.toFixed(2).replace('.', ',')} kWh`;
+        } else {
+            boxConsumoFaturado.style.display = 'none';
+        }
 
         document.getElementById('resPotencia').innerText = `${potenciaTotal.toLocaleString('pt-BR')} W`;
         document.getElementById('resConsumo').innerText = `${consumoTotalKwh.toFixed(2).replace('.', ',')} kWh`;
         document.getElementById('resValor').innerText = `R$ ${valorTotalReais.toFixed(2).replace('.', ',')}`;
 
-        const culpados = Object.entries(consumoIndividual)
-            .sort((a, b) => b[1] - a[1])
+        // Painel Energia Solar
+        const boxSolar = document.getElementById('boxSolarInfo');
+        boxSolar.style.display = 'block';
+        if (possuiSolar) {
+            boxSolar.innerHTML = `<strong>Energia Solar Ativa:</strong> Você economizou <strong>${economiaSolarKwh.toFixed(2).replace('.', ',')} kWh</strong> (R$ ${economiaSolarReais.toFixed(2).replace('.', ',')}) neste mês!`;
+        } else {
+            const economiaPotencialKwh = consumoTotalKwh * 0.90;
+            const economiaPotencialReais = economiaPotencialKwh * tarifaFinal;
+            boxSolar.innerHTML = `<strong>Oportunidade Solar:</strong> Sem energia solar você gasta R$ ${valorSemSolarReais.toFixed(2).replace('.', ',')}/mês. Com energia solar você poderia economizar até <strong>R$ ${economiaPotencialReais.toFixed(2).replace('.', ',')}/mês</strong>!`;
+        }
+
+        // Painel Comparativo Histórico
+        const boxComparacao = document.getElementById('boxComparacaoInfo');
+        if (consumoAnterior > 0) {
+            boxComparacao.style.display = 'block';
+            const difKwh = consumoTotalKwh - consumoAnterior;
+            const difPercentual = ((difKwh / consumoAnterior) * 100).toFixed(1);
+            if (difKwh > 0) {
+                boxComparacao.innerHTML = `<strong>Comparativo com Mês Anterior:</strong> Aumento de <strong>${difKwh.toFixed(2).replace('.', ',')} kWh (+${difPercentual}%)</strong> em relação ao consumo anterior (${consumoAnterior} kWh).`;
+            } else if (difKwh < 0) {
+                boxComparacao.innerHTML = `<strong>Comparativo com Mês Anterior:</strong> Redução de <strong>${Math.abs(difKwh).toFixed(2).replace('.', ',')} kWh (${difPercentual}%)</strong> em relação ao consumo anterior (${consumoAnterior} kWh).`;
+            } else {
+                boxComparacao.innerHTML = `<strong>Comparativo com Mês Anterior:</strong> Seu consumo permaneceu exatamente igual ao mês anterior (${consumoAnterior} kWh).`;
+            }
+        } else {
+            boxComparacao.style.display = 'none';
+        }
+
+        // Maiores Culpados
+        const culpados = listaItensCalculados
+            .sort((a, b) => b.consumo - a.consumo)
             .slice(0, 3);
 
         const listaCulpados = document.getElementById('listaCulpados');
         listaCulpados.innerHTML = '';
 
         if (culpados.length === 0) {
-            listaCulpados.innerHTML = '<li>Nenhum aparelho com valores válidos informado.</li>';
+            listaCulpados.innerHTML = '<li>Nenhum aparelho preenchido com dados válidos.</li>';
         } else {
-            culpados.forEach(([nome, consumo], index) => {
-                const percentual = consumoTotalKwh > 0 ? ((consumo / consumoTotalKwh) * 100).toFixed(1) : 0;
-                const nomeExibicao = NomesFormatados[nome] || nome;
+            culpados.forEach((item, index) => {
+                const percentual = consumoTotalKwh > 0 ? ((item.consumo / consumoTotalKwh) * 100).toFixed(1) : 0;
                 listaCulpados.innerHTML += `
                     <li class="${index === 0 ? 'top-culpado' : ''}">
-                        <span>${index + 1}º ${nomeExibicao.toUpperCase()}</span>
-                        <span>${consumo.toFixed(2).replace('.', ',')} kWh (${percentual}%)</span>
+                        <span>${index + 1}º ${item.nome.toUpperCase()}</span>
+                        <span>${item.consumo.toFixed(2).replace('.', ',')} kWh (${percentual}%)</span>
                     </li>
                 `;
             });
         }
 
+        // Tabela de Projeção Anual
+        const cabecalhoProjecao = document.getElementById('cabecalhoProjecao');
         const corpoProjecao = document.getElementById('corpoProjecao');
+        
         corpoProjecao.innerHTML = '';
 
-        let acKwh = 0;
-        let acReais = 0;
-
-        Meses.forEach((mes) => {
-            acKwh += consumoTotalKwh;
-            acReais += valorTotalReais;
-
-            corpoProjecao.innerHTML += `
+        if (possuiSolar) {
+            cabecalhoProjecao.innerHTML = `
                 <tr>
-                    <td>${mes}</td>
-                    <td>R$ ${valorTotalReais.toFixed(2).replace('.', ',')}</td>
-                    <td>${acKwh.toFixed(2).replace('.', ',')} kWh</td>
-                    <td>R$ ${acReais.toFixed(2).replace('.', ',')}</td>
+                    <th>Mês</th>
+                    <th>Gasto Mensal</th>
+                    <th>Gasto Acumulado</th>
                 </tr>
             `;
-        });
+
+            let acReais = 0;
+            Meses.forEach((mes) => {
+                acReais += valorTotalReais;
+                corpoProjecao.innerHTML += `
+                    <tr>
+                        <td>${mes}</td>
+                        <td>R$ ${valorTotalReais.toFixed(2).replace('.', ',')}</td>
+                        <td>R$ ${acReais.toFixed(2).replace('.', ',')}</td>
+                    </tr>
+                `;
+            });
+        } else {
+            cabecalhoProjecao.innerHTML = `
+                <tr>
+                    <th>Mês</th>
+                    <th>Gasto Mensal</th>
+                    <th>Economia com Painéis</th>
+                    <th>Gasto Acumulado</th>
+                </tr>
+            `;
+
+            let acReais = 0;
+            const economiaPotencialMensal = consumoTotalKwh * 0.90 * tarifaFinal;
+
+            Meses.forEach((mes) => {
+                acReais += valorTotalReais;
+                corpoProjecao.innerHTML += `
+                    <tr>
+                        <td>${mes}</td>
+                        <td>R$ ${valorTotalReais.toFixed(2).replace('.', ',')}</td>
+                        <td>R$ ${economiaPotencialMensal.toFixed(2).replace('.', ',')}</td>
+                        <td>R$ ${acReais.toFixed(2).replace('.', ',')}</td>
+                    </tr>
+                `;
+            });
+        }
 
         document.getElementById('cardResultado').style.display = 'block';
     }
